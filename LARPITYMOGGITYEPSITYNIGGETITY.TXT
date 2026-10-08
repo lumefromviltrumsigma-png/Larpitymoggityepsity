@@ -877,6 +877,7 @@ do
 		Tools = v2:Tab({ Title = "Tools", Icon = "wrench" }),
 		Utilities = v2:Tab({ Title = "Utilities", Icon = "settings-2" }),
 		Visual = v2:Tab({ Title = "Visual", Icon = "sparkles" }),
+		PlayerInfo = v2:Tab({ Title = "Player Info", Icon = "user" }),   -- NEW
 		UISettings = v2:Tab({ Title = "UI Settings", Icon = "palette" }),
 	}
 
@@ -12231,6 +12232,154 @@ end)
 pcall(function()
 end)
 
+--==================================================--
+--       PLAYER INFO (NEW TAB) — ADDED FEATURE        --
+--==================================================--
+do
+	local selectedPlayer = localPlayer
+	local playerNames = {}
+	
+	for _, p in ipairs(Players:GetPlayers()) do
+		table.insert(playerNames, p.Name)
+	end
+
+	tbl6.PlayerInfoBox = tbl5.PlayerInfo:Section({ Opened = true, Title = "| Target Player Info", Icon = "user" })
+
+	local targetPlayerDropdown = tbl6.PlayerInfoBox:Dropdown({
+		Title = "Select Player",
+		Values = playerNames,
+		Default = localPlayer.Name,
+		Multi = false,
+		Callback = function(selected)
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p.Name == selected then
+					selectedPlayer = p
+					break
+				end
+			end
+		end,
+	})
+
+	Players.PlayerAdded:Connect(function(p)
+		table.insert(playerNames, p.Name)
+		pcall(function()
+			if targetPlayerDropdown and targetPlayerDropdown.Refresh then
+				targetPlayerDropdown:Refresh(playerNames)
+			end
+		end)
+	end)
+
+	Players.PlayerRemoving:Connect(function(p)
+		for i, name in ipairs(playerNames) do
+			if name == p.Name then
+				table.remove(playerNames, i)
+				break
+			end
+		end
+		pcall(function()
+			if targetPlayerDropdown and targetPlayerDropdown.Refresh then
+				targetPlayerDropdown:Refresh(playerNames)
+			end
+		end)
+	end)
+
+	tbl6.PlayerInfoBox:Divider()
+
+	local targetNameLabel = tbl6.PlayerInfoBox:Paragraph({ Title = "Target Name:", Desc = "Loading..." })
+	local targetDisplayLabel = tbl6.PlayerInfoBox:Paragraph({ Title = "Target Display:", Desc = "Loading..." })
+	local targetUserIdLabel = tbl6.PlayerInfoBox:Paragraph({ Title = "Target User ID:", Desc = "Loading..." })
+	local targetHealthLabel = tbl6.PlayerInfoBox:Paragraph({ Title = "Target Health:", Desc = "Loading..." })
+	local targetTeamLabel = tbl6.PlayerInfoBox:Paragraph({ Title = "Target Team:", Desc = "Loading..." })
+
+	task.spawn(function()
+		while true do
+			pcall(function()
+				if selectedPlayer and selectedPlayer.Parent then
+					local function setDesc(label, text)
+						pcall(function()
+							if label.SetDesc then
+								label:SetDesc(text)
+							elseif label.Set then
+								label:Set(text)
+							end
+						end)
+					end
+
+					setDesc(targetNameLabel, selectedPlayer.Name)
+					setDesc(targetDisplayLabel, selectedPlayer.DisplayName)
+					setDesc(targetUserIdLabel, tostring(selectedPlayer.UserId))
+
+					local char = selectedPlayer.Character
+					if char then
+						local hum = char:FindFirstChildOfClass("Humanoid")
+						if hum then
+							setDesc(targetHealthLabel, math.floor(hum.Health) .. " / " .. math.floor(hum.MaxHealth))
+						else
+							setDesc(targetHealthLabel, "N/A")
+						end
+					else
+						setDesc(targetHealthLabel, "Offline / No Character")
+					end
+
+					local team = selectedPlayer.Team
+					setDesc(targetTeamLabel, team and team.Name or "None")
+				else
+					local function setNone(label)
+						pcall(function()
+							if label.SetDesc then
+								label:SetDesc("None")
+							elseif label.Set then
+								label:Set("None")
+							end
+						end)
+					end
+
+					setNone(targetNameLabel)
+					setNone(targetDisplayLabel)
+					setNone(targetUserIdLabel)
+					setNone(targetHealthLabel)
+					setNone(targetTeamLabel)
+				end
+			end)
+			task.wait(1)
+		end
+	end)
+
+	tbl6.PlayerInfoBox:Divider()
+	tbl6.PlayerInfoBox:Button({
+		Title = "Refresh Player List",
+		Callback = function()
+			playerNames = {}
+			for _, p in ipairs(Players:GetPlayers()) do
+				table.insert(playerNames, p.Name)
+			end
+			pcall(function()
+				if targetPlayerDropdown and targetPlayerDropdown.Refresh then
+					targetPlayerDropdown:Refresh(playerNames)
+				end
+			end)
+		end,
+	})
+
+	tbl6.PlayerInfoBox:Button({
+		Title = "Teleport To Target",
+		Callback = function()
+			if selectedPlayer and selectedPlayer ~= localPlayer and selectedPlayer.Character then
+				local hrp = selectedPlayer.Character:FindFirstChild("HumanoidRootPart")
+				if hrp then
+					fn9(hrp.CFrame * CFrame.new(0, 0, 3))
+					fn5("Player Info", "Teleported to " .. selectedPlayer.Name)
+				else
+					fn5("Player Info", "Target has no HumanoidRootPart")
+				end
+			else
+				fn5("Player Info", "No valid target selected")
+			end
+		end,
+	})
+end
+--==================================================--
+
 do
 	local v3 = tbl5.UISettings:Section({ Opened = true, Title = "| Configuration", Icon = "settings" })
 
@@ -12582,6 +12731,7 @@ do
 				pcall(function()
 					game:GetService("UserInputService").MouseIconEnabled = true
 				end)
+
 				if connection7 then
 					connection7:Disconnect()
 					connection7 = nil
