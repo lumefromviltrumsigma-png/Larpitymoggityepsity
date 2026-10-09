@@ -612,7 +612,7 @@ do
 
 	v2 = v:CreateWindow({
 		Title = "Larp Hub | Ink Game",
-		Icon = "snowflake",
+		Icon = "zap",
 		Folder = "LarpHub",
 		ToggleKey = Enum.KeyCode.G,
 		Size = UDim2.fromOffset(650, 480),
@@ -627,7 +627,7 @@ do
 			Anonymous = false,
 		},
 		OpenButton = {
-			Title = "Larp Hub",
+			Title = "⚡ Larp Hub",
 			CornerRadius = UDim.new(1, 0),
 			StrokeThickness = 3,
 			Enabled = true,
@@ -863,12 +863,15 @@ do
 		return v4
 	end
 
+	--==================================================--
+	--         UPGRADED TAB ICONS (Larp style)           --
+	--==================================================--
 	tbl5 = {
-		RLGL = v2:Tab({ Title = "Red Light Green Light", Icon = "skull" }),
+		RLGL = v2:Tab({ Title = "Red Light Green Light", Icon = "traffic-cone" }),
 		Dalgona = v2:Tab({ Title = "Dalgona & Pentathlon", Icon = "cookie" }),
-		LightsOut = v2:Tab({ Title = "Lights Out", Icon = "moon-star" }),
+		LightsOut = v2:Tab({ Title = "Lights Out", Icon = "moon" }),
 		HSTOW = v2:Tab({ Title = "Hide And Seek & Tug Of War", Icon = "eye-off" }),
-		MingleGlass = v2:Tab({ Title = "Jump Rope & Glass Bridge", Icon = "wand-sparkles" }),
+		MingleGlass = v2:Tab({ Title = "Jump Rope & Glass Bridge", Icon = "sparkles" }),
 		Mingle = v2:Tab({ Title = "Mingle", Icon = "users-round" }),
 		Rebel = v2:Tab({ Title = "Rebel", Icon = "crosshair" }),
 		Sky = v2:Tab({ Title = "Sky & Squid Game", Icon = "cloud-lightning" }),
@@ -876,8 +879,8 @@ do
 		Combat = v2:Tab({ Title = "Combat", Icon = "sword" }),
 		Tools = v2:Tab({ Title = "Tools", Icon = "wrench" }),
 		Utilities = v2:Tab({ Title = "Utilities", Icon = "settings-2" }),
-		Visual = v2:Tab({ Title = "Visual", Icon = "sparkles" }),
-		PlayerInfo = v2:Tab({ Title = "Player Info", Icon = "user" }),   -- NEW
+		Visual = v2:Tab({ Title = "Visual", Icon = "flame" }),
+		PlayerInfo = v2:Tab({ Title = "Player Info", Icon = "user-search" }),
 		UISettings = v2:Tab({ Title = "UI Settings", Icon = "palette" }),
 	}
 
@@ -10482,7 +10485,6 @@ end
 
 --==================================================--
 --         ANTI-STUN (TOOLS TAB)                     --
---         Stun vəziyyətini avtomatik təmizləyir      --
 --==================================================--
 do
 	local AntiStunEnabled = false
@@ -10520,16 +10522,16 @@ do
 
 						local humanoid = character:FindFirstChildOfClass("Humanoid")
 						if humanoid then
-							local ok = pcall(function()
+							pcall(function()
 								if humanoid:GetState() == Enum.HumanoidStateType.Stunned then
 									humanoid:ChangeState(Enum.HumanoidStateType.Running)
 								end
 							end)
-							if not ok then
+							pcall(function()
 								if humanoid:GetState() == Enum.HumanoidStateType.PlatformStanding then
 									humanoid:ChangeState(Enum.HumanoidStateType.Running)
 								end
-							end
+							end)
 						end
 					end)
 				end)
@@ -10566,1684 +10568,48 @@ do
 end
 --==================================================--
 
-do
-	local flag3 = false
-	tbl2.stealThread = nil
-
-	local function fn14()
-		local character = localPlayer.Character
-		if character and character:FindFirstChild("Bandage") then
-			return true
-		end
-		local backpack = localPlayer:FindFirstChild("Backpack")
-		if backpack and backpack:FindFirstChild("Bandage") then
-			return true
-		end
-		return false
-	end
-
-	local function fn15()
-		local function fn16(arg)
-			for _, child in ipairs(arg:GetChildren()) do
-				if child.Name ~= "DroppedBandage" then
-					continue
-				end
-				local primaryPart = child:IsA("Model") and (child.PrimaryPart or child:FindFirstChildWhichIsA("BasePart", true)) or child:IsA("BasePart") and child
-				if primaryPart then
-					return child, primaryPart
-				end
-			end
-
-			return nil, nil
-		end
-
-		local v3, v4 = fn16(workspace)
-		if v3 then
-			return v3, v4
-		end
-		local effects = workspace:FindFirstChild("Effects")
-
-		if effects then
-			local v5, v6 = fn16(effects)
-			if v5 then
-				return v5, v6
-			end
-		end
-
-		local live = workspace:FindFirstChild("Live")
-
-		if live then
-			local v5, v6 = fn16(live)
-			if v5 then
-				return v5, v6
-			end
-		end
-
-		return nil, nil
-	end
-
-	local function fn16()
-		if fn4("RedLightGreenLight") then
-			local playerGui = localPlayer:FindFirstChild("PlayerGui")
-
-			if playerGui then
-				local impactFrames = playerGui:FindFirstChild("ImpactFrames")
-
-				if impactFrames then
-					local trafficLightEmpty = impactFrames:FindFirstChild("TrafficLightEmpty")
-					if trafficLightEmpty and trafficLightEmpty.Image == "rbxassetid://88400194373338" then
-						return true
-					end
-				end
-			end
-		end
-
-		return false
-	end
-
-	tbl6.UtilitiesBox:Toggle({
-		Title = "Auto Steal Bandages",
-		Default = false,
-		Callback = function(arg)
-			flag3 = arg
-
-			if flag3 then
-				if tbl2.stealThread then
-					return
-				end
-				tbl2.stealThread = true
-
-				task.spawn(function()
-					while flag3 and tbl2.stealThread do
-						if not fn14() and not fn16() then
-							local v3, v4 = fn15()
-
-							if v3 and v4 then
-								local character = localPlayer.Character
-								local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
-
-								if humanoidRootPart then
-									local cFrame = humanoidRootPart.CFrame
-									local cFrame2 = v4.CFrame
-									humanoidRootPart.CFrame = cFrame2
-									local n = 0
-
-									while true do
-										if flag3 and not fn14() and v3 and v3.Parent and n < 10 then
-											if not fn16() then
-												humanoidRootPart.CFrame = cFrame2
-
-												if typeof(firetouchinterest) == "function" then
-													pcall(function()
-														firetouchinterest(humanoidRootPart, v4, 0)
-														task.wait(0.05)
-														firetouchinterest(humanoidRootPart, v4, 1)
-													end)
-												end
-
-												task.wait(0.1)
-												n += 1
-												continue
-											end
-										end
-
-										break
-									end
-
-									if character and character:FindFirstChild("HumanoidRootPart") then
-										character.HumanoidRootPart.CFrame = cFrame
-									end
-
-									task.wait(0.5)
-								end
-							end
-						end
-
-						task.wait(0.5)
-					end
-
-					tbl2.stealThread = nil
-				end)
-			end
-		end,
-	})
-end
-
-do
-	local walkSpeed = 14
-	local jumpPower = 50
-	local tbl10 = { "Left Hip", "Left Shoulder", "Neck", "Right Hip", "Right Shoulder" }
-
-	local tbl11 = {
-		"Ragdoll",
-		"Stun",
-		"RotateDisabled",
-		"RagdollWakeupImmunity",
-		"RagdollWakeupImmunityLess",
-		"StopLoopTpFix",
-		"TrueStun",
-		"Waiting",
-		"waitbeforecheckingforground",
-	}
-
-	local tbl12 = { "Ragdoll", "TrueStun", "Stun", "RotateDisabled", "Waiting" }
-
-	local function fn14(arg)
-		for _, v3 in ipairs(tbl11) do
-			local v4 = arg:FindFirstChild(v3)
-
-			if v4 then
-				v4.Parent = nil
-			end
-		end
-	end
-
-	local function fn15(arg)
-		local torso = arg:FindFirstChild("Torso")
-		if not torso then
-			return
-		end
-
-		for _, child in ipairs(torso:GetChildren()) do
-			if child:IsA("BallSocketConstraint") and child.Name:match("^SocketConstraint") then
-				child.Enabled = false
-				child.Parent = nil
-			end
-		end
-
-		for _, v3 in ipairs(tbl10) do
-			local v4 = torso:FindFirstChild(v3)
-
-			if v4 and v4:IsA("Motor6D") and not v4.Part0 then
-				v4.Part0 = torso
-			end
-		end
-	end
-
-	local function fn16(arg)
-		local humanoidRootPart = arg:FindFirstChild("HumanoidRootPart")
-		if not humanoidRootPart then
-			return
-		end
-
-		for _, child in ipairs(humanoidRootPart:GetChildren()) do
-			if child.Name:match("^CacheAttachment") or child.Name:match("^SocketConstraint") then
-				child.Parent = nil
-			end
-		end
-
-		for _, child in ipairs(humanoidRootPart:GetChildren()) do
-			if child:IsA("BodyVelocity") or child:IsA("BodyForce") or child:IsA("BodyPosition") then
-				child.Parent = nil
-			end
-		end
-	end
-
-	local function fn17(arg)
-		local humanoid = arg:FindFirstChildOfClass("Humanoid")
-		if not humanoid then
-			return
-		end
-		local humanoidRootPart = arg:FindFirstChild("HumanoidRootPart")
-		fn14(arg)
-		humanoid.PlatformStand = false
-		humanoid.AutoRotate = true
-		humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, true)
-		humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
-		humanoid:SetStateEnabled(Enum.HumanoidStateType.Running, true)
-		humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
-		humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
-		humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
-		humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding, false)
-		humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-
-		if humanoidRootPart then
-			humanoidRootPart.AssemblyLinearVelocity = Vector3.new(0, humanoidRootPart.AssemblyLinearVelocity.Y, 0)
-		end
-
-		fn15(arg)
-		fn16(arg)
-		humanoid.WalkSpeed = walkSpeed
-		humanoid.JumpPower = jumpPower
-
-		if shared then
-			shared.WalkSpeedChangeTick = nil
-		end
-
-		task.delay(0.1, function()
-			if humanoid and humanoid.Parent and humanoid.Health > 0 then
-				humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-			end
-		end)
-	end
-
-	tbl.antiPushEnabled = false
-	local tbl13 = {}
-
-	local function fn18()
-		for _, v3 in ipairs(tbl13) do
-			if v3 then
-				v3:Disconnect()
-			end
-		end
-
-		table.clear(tbl13)
-	end
-
-	local function fn19(arg)
-		if not tbl.antiPushEnabled then
-			return
-		end
-		fn18()
-		local humanoid = arg:FindFirstChildOfClass("Humanoid")
-		if not humanoid then
-			return
-		end
-		local humanoidRootPart = arg:FindFirstChild("HumanoidRootPart")
-		if not humanoidRootPart then
-			return
-		end
-		local flag3 = false
-
-		local connection5 = arg.ChildAdded:Connect(function(child)
-			if flag3 or not tbl.antiPushEnabled then
-				return
-			end
-
-			if typeof(child) == "Instance" then
-				local name = child.Name
-
-				for _, v3 in ipairs(tbl12) do
-					if name == v3 then
-						task.spawn(function()
-							fn17(arg)
-						end)
-
-						break
-					end
-				end
-			end
-		end)
-
-		table.insert(tbl13, connection5)
-
-		local connection6 = RunService.Heartbeat:Connect(function()
-			if not tbl.antiPushEnabled then
-				fn18()
-				return
-			end
-
-			if not arg or not arg.Parent then
-				fn18()
-				return
-			end
-
-			if not humanoid or not humanoid.Parent or humanoid.Health <= 0 then
-				flag3 = true
-				fn18()
-				return
-			end
-
-			fn14(arg)
-
-			if humanoid.PlatformStand then
-				humanoid.PlatformStand = false
-				humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-			end
-
-			if humanoid.WalkSpeed <= 0 then
-				humanoid.WalkSpeed = walkSpeed
-
-				if shared then
-					shared.WalkSpeedChangeTick = nil
-				end
-			end
-
-			if humanoid.JumpPower <= 0 then
-				humanoid.JumpPower = jumpPower
-			end
-
-			if not humanoid.AutoRotate then
-				humanoid.AutoRotate = true
-			end
-
-			if not humanoid:GetStateEnabled(Enum.HumanoidStateType.Jumping) then
-				humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
-			end
-
-			if not humanoid:GetStateEnabled(Enum.HumanoidStateType.Running) then
-				humanoid:SetStateEnabled(Enum.HumanoidStateType.Running, true)
-			end
-
-			if not humanoid:GetStateEnabled(Enum.HumanoidStateType.GettingUp) then
-				humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
-			end
-
-			local torso = arg:FindFirstChild("Torso")
-
-			if torso then
-				local flag4 = false
-
-				for _, child in ipairs(torso:GetChildren()) do
-					if child:IsA("BallSocketConstraint") and child.Name:match("^SocketConstraint") and child.Enabled then
-						flag4 = true
-						break
-					end
-				end
-
-				if flag4 then
-					fn15(arg)
-				end
-			end
-
-			if humanoidRootPart and humanoidRootPart.Parent then
-				for _, child in ipairs(humanoidRootPart:GetChildren()) do
-					if child:IsA("BodyVelocity") or child:IsA("BodyForce") then
-						child.Parent = nil
-					end
-				end
-			end
-		end)
-
-		table.insert(tbl13, connection6)
-	end
-
-	tbl6.UtilitiesBox:Toggle({
-		Title = "Anti Push/Ragdoll",
-		Default = false,
-		Callback = function(antiPushEnabled)
-			tbl.antiPushEnabled = antiPushEnabled
-
-			if antiPushEnabled then
-				if localPlayer.Character then
-					fn19(localPlayer.Character)
-				end
-
-				local connection5 = localPlayer.CharacterAdded:Connect(function(character)
-					task.wait(0.5)
-
-					if tbl.antiPushEnabled then
-						fn19(character)
-					end
-				end)
-
-				table.insert(tbl13, connection5)
-			else
-				fn18()
-			end
-		end,
-	})
-end
-
-game:GetService("UserInputService")
-tbl.instantInteractEnabled = false
-local connection5 = nil
-
-tbl6.UtilitiesBox:Toggle({
-	Title = "Instant Interact",
-	Default = false,
-	Callback = function(instantInteractEnabled)
-		tbl.instantInteractEnabled = instantInteractEnabled
-
-		if tbl.instantInteractEnabled then
-			connection5 = game:GetService("ProximityPromptService").PromptButtonHoldBegan:Connect(function(prompt, player)
-				if tbl.instantInteractEnabled and player == localPlayer then
-					fireproximityprompt(prompt)
-				end
-			end)
-		elseif connection5 then
-			connection5:Disconnect()
-			connection5 = nil
-		end
-	end,
-})
-
-tbl6.GameToolsBox:Toggle({
-	Title = "Anti-AFK",
-	Default = false,
-	Callback = function(arg)
-		if arg then
-			if not getgenv().antiAfkConnection then
-				local idled = localPlayer.Idled
-
-				getgenv().antiAfkConnection = idled:Connect(function()
-					local VirtualUser = game:GetService("VirtualUser")
-					VirtualUser:CaptureController()
-					VirtualUser:ClickButton2(Vector2.new())
-				end)
-			end
-		elseif getgenv().antiAfkConnection then
-			getgenv().antiAfkConnection:Disconnect()
-			getgenv().antiAfkConnection = nil
-		end
-	end,
-})
-
-tbl6.GameToolsBox:Toggle({
-	Title = "Bandage Helper",
-	Default = false,
-	Callback = function(arg)
-		if arg then
-			if _G.BandageHelperActive then
-				return
-			end
-			_G.BandageHelperActive = true
-			_G.BandageConns = {}
-			local Players2 = game:GetService("Players")
-			local RunService_ = game:GetService("RunService")
-			local Lighting = game:GetService("Lighting")
-			local StarterPlayer = game:GetService("StarterPlayer")
-			local localPlayer2 = Players2.LocalPlayer
-			local tbl10 = { "Freeze", "Slowed", "Action", "LightAction", "NoAttack" }
-			local tbl11 = { "Stun", "Freeze", "Slowed", "Action", "LightAction", "Ragdoll", "NoAttack" }
-
-			local tbl12 = {
-				["HEALING WAVE 1"] = true,
-				["HEALING WAVE 2"] = true,
-				SPARKS = true,
-				["STAR SPARKS"] = true,
-				BandageModel = true,
-				HealingOverlay = true,
-				Blue = true,
-				Green = true,
-				VFX = true,
-			}
-
-			local function fn14(child)
-				if not _G.BandageHelperActive then
-					return
-				end
-
-				if child:IsA("ColorCorrectionEffect") then
-					if child.TintColor.G > 0.6 and (child.TintColor.R < 0.5 or child.TintColor.B < 0.5) then
-						child.TintColor = Color3.fromRGB(255, 255, 255)
-					end
-
-					if child.Name == "ColorSkill" or string.find(string.lower(child.Name), "heal") or string.find(string.lower(child.Name), "green") or string.find(string.lower(child.Name), "bandage") then
-						child:Destroy()
-					end
-				elseif child:IsA("BloomEffect") or child:IsA("BlurEffect") then
-					if string.find(string.lower(child.Name), "heal") or string.find(string.lower(child.Name), "bandage") then
-						child:Destroy()
-					end
-				end
-			end
-
-			for _, child in ipairs(Lighting:GetChildren()) do
-				fn14(child)
-			end
-
-			table.insert(_G.BandageConns, Lighting.ChildAdded:Connect(fn14))
-
-			local function fn15(character)
-				if not character or not _G.BandageHelperActive then
-					return
-				end
-				local humanoid = character:WaitForChild("Humanoid", 5)
-				character:WaitForChild("HumanoidRootPart", 5)
-				if not humanoid then
-					return
-				end
-
-				table.insert(_G.BandageConns, (humanoid:FindFirstChildOfClass("Animator") or humanoid).AnimationPlayed:Connect(function(arg2)
-					if _G.BandageHelperActive and arg2.Animation and (string.find(arg2.Animation.AnimationId, "75334524397463") or arg2.Animation.Name and string.find(string.lower(arg2.Animation.Name), "bandage")) then
-						arg2:Stop()
-					end
-				end))
-
-				table.insert(_G.BandageConns, character.DescendantAdded:Connect(function(descendant)
-					local bandageHelperActive = _G.BandageHelperActive
-					local v3
-
-					if bandageHelperActive then
-						v3 = tbl12[descendant.Name] or string.find(string.lower(descendant.Name), "healing") or string.find(string.lower(descendant.Name), "bandage") or string.find(string.lower(descendant.Name), "sparks")
-					else
-						v3 = bandageHelperActive
-					end
-
-					if v3 then
-						descendant:Destroy()
-					end
-				end))
-			end
-
-			if localPlayer2.Character then
-				fn15(localPlayer2.Character)
-			end
-
-			table.insert(_G.BandageConns, localPlayer2.CharacterAdded:Connect(fn15))
-
-			local function fn16(arg2)
-				table.insert(_G.BandageConns, arg2.DescendantAdded:Connect(function(descendant)
-					local bandageHelperActive = _G.BandageHelperActive
-
-					if bandageHelperActive then
-						bandageHelperActive = tbl12[descendant.Name] or string.find(string.lower(descendant.Name), "bandage") or string.find(string.lower(descendant.Name), "healing")
-					end
-
-					if bandageHelperActive and not descendant:IsA("Script") then
-						descendant:Destroy()
-					end
-				end))
-			end
-
-			local playerGui = localPlayer2:FindFirstChildOfClass("PlayerGui")
-
-			if playerGui then
-				fn16(playerGui)
-			else
-				table.insert(_G.BandageConns, localPlayer2.ChildAdded:Connect(function(child)
-					if _G.BandageHelperActive and child:IsA("PlayerGui") then
-						fn16(child)
-					end
-				end))
-			end
-
-			table.insert(_G.BandageConns, RunService_.Heartbeat:Connect(function()
-				if not _G.BandageHelperActive then
-					return
-				end
-
-				if shared.IsInCutscene then
-					shared.IsInCutscene = nil
-				end
-
-				local character = localPlayer2.Character
-				if not character then
-					return
-				end
-				local humanoid = character:FindFirstChildOfClass("Humanoid")
-				local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-
-				for _, v3 in ipairs(tbl10) do
-					if character:GetAttribute(v3) ~= nil then
-						character:SetAttribute(v3, nil)
-					end
-
-					if humanoid and humanoid:GetAttribute(v3) ~= nil then
-						humanoid:SetAttribute(v3, nil)
-					end
-				end
-
-				for _, v3 in ipairs(tbl11) do
-					local v4 = character:FindFirstChild(v3)
-
-					if v4 then
-						v4:Destroy()
-					end
-				end
-
-				if humanoidRootPart and humanoidRootPart.Anchored then
-					humanoidRootPart.Anchored = false
-				end
-
-				shared.WalkSpeedChangeTick = nil
-
-				if humanoid then
-					local characterWalkSpeed = StarterPlayer.CharacterWalkSpeed or 16
-					local characterJumpPower = StarterPlayer.CharacterJumpPower or 50
-
-					if humanoid.WalkSpeed < characterWalkSpeed then
-						humanoid.WalkSpeed = characterWalkSpeed
-					end
-
-					if humanoid.JumpPower < characterJumpPower then
-						humanoid.JumpPower = characterJumpPower
-					end
-
-					if humanoid.PlatformStand then
-						humanoid.PlatformStand = false
-					end
-				end
-			end))
-		else
-			_G.BandageHelperActive = false
-
-			if _G.BandageConns then
-				for _, bandageConn in ipairs(_G.BandageConns) do
-					if bandageConn then
-						bandageConn:Disconnect()
-					end
-				end
-
-				table.clear(_G.BandageConns)
-			end
-		end
-	end,
-})
-
-tbl.espLightsOutEnabled = false
-
-do
-	local flag3 = nil
-
-	local function fn14()
-		for _, player in pairs(Players:GetPlayers()) do
-			if player ~= localPlayer and player.Character then
-				local character = player.Character
-
-				if not character:FindFirstChild("LightsOutESP") then
-					local highlight = Instance.new("Highlight")
-					highlight.Name = "LightsOutESP"
-					highlight.FillTransparency = 0.5
-					highlight.OutlineTransparency = 0
-					highlight.FillColor = Color3.fromRGB(255, 0, 0)
-					highlight.OutlineColor = Color3.fromRGB(200, 0, 0)
-					highlight.Adornee = character
-					highlight.Parent = character
-				end
-			end
-		end
-	end
-
-	local function fn15()
-		for _, player in pairs(Players:GetPlayers()) do
-			if player.Character then
-				local lightsOutESP = player.Character:FindFirstChild("LightsOutESP")
-
-				if lightsOutESP then
-					lightsOutESP:Destroy()
-				end
-			end
-		end
-	end
-
-	tbl6.LightsOutBox = tbl5.LightsOut:Section({ Opened = true, Title = "| Lights Out", Icon = "moon" })
-
-	tbl6.LightsOutBox:Button({
-		Title = "TP To Roof",
-		Callback = function()
-			if fn4("LightsOut") then
-				local character = localPlayer.Character
-				character = character and character:FindFirstChild("HumanoidRootPart")
-
-				if character then
-					character.CFrame = CFrame.new(198, 145, -93)
-					fn5("Lights Out", "Teleported to roof")
-				end
-			else
-				fn5(nil, "Lights Out is not currently running.")
-			end
-		end,
-	})
-
-	tbl6.LightsOutBox:Toggle({
-		Title = "ESP All",
-		Default = false,
-		Callback = function(espLightsOutEnabled)
-			tbl.espLightsOutEnabled = espLightsOutEnabled
-
-			if tbl.espLightsOutEnabled then
-				if flag3 then
-					return
-				end
-				flag3 = true
-
-				task.spawn(function()
-					while tbl.espLightsOutEnabled and flag3 do
-						if fn4("LightsOut") then
-							fn14()
-						else
-							fn15()
-						end
-
-						task.wait(2)
-					end
-
-					fn15()
-					flag3 = nil
-				end)
-			else
-				fn15()
-			end
-		end,
-	})
-end
-
-tbl.dashAssistEnabled = false
-
-do
-	local tbl10 = {}
-	local flag3 = false
-
-	local function fn14()
-		local character = localPlayer.Character
-		if not character then
-			return
-		end
-		local humanoid = character:FindFirstChild("Humanoid")
-		if not humanoid then
-			return
-		end
-		local animator = humanoid:FindFirstChildOfClass("Animator")
-		if not animator then
-			return
-		end
-
-		local connection6 = animator.AnimationPlayed:Connect(function(arg)
-			if not tbl.dashAssistEnabled then
-				return
-			end
-
-			if arg.Animation and string.find(tostring(arg.Animation.AnimationId), "99157505926076", 1, true) then
-				flag3 = true
-				local humanoid2 = character:FindFirstChild("Humanoid")
-
-				if humanoid2 then
-					humanoid2.AutoRotate = false
-				end
-
-				arg.Stopped:Once(function()
-					flag3 = false
-					local humanoid3 = localPlayer.Character and localPlayer.Character:FindFirstChild("Humanoid")
-
-					if humanoid3 then
-						humanoid3.AutoRotate = true
-					end
-				end)
-			end
-		end)
-
-		table.insert(tbl10, connection6)
-	end
-
-	tbl6.LightsOutBox:Toggle({
-		Title = "Dash Assist",
-		Default = false,
-		Callback = function(dashAssistEnabled)
-			tbl.dashAssistEnabled = dashAssistEnabled
-
-			if tbl.dashAssistEnabled then
-				fn14()
-
-				local connection6 = localPlayer.CharacterAdded:Connect(function()
-					task.wait(0.5)
-
-					if tbl.dashAssistEnabled then
-						fn14()
-					end
-				end)
-
-				table.insert(tbl10, connection6)
-
-				local connection7 = game:GetService("RunService").Heartbeat:Connect(function()
-					if not tbl.dashAssistEnabled or not flag3 then
-						return
-					end
-
-					if not fn4("LightsOut") then
-						return
-					end
-					local character = localPlayer.Character
-					character = character and character:FindFirstChild("HumanoidRootPart")
-					if not character then
-						return
-					end
-					local huge = math.huge
-					local v3 = nil
-
-					for _, player in pairs(Players:GetPlayers()) do
-						if player ~= localPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
-							local magnitude = (player.Character.HumanoidRootPart.Position - character.Position).Magnitude
-
-							if magnitude < huge then
-								huge = magnitude
-								v3 = player
-							end
-						end
-					end
-
-					if v3 and v3.Character and v3.Character:FindFirstChild("HumanoidRootPart") then
-						local position = v3.Character.HumanoidRootPart.Position
-						character.CFrame = CFrame.lookAt(character.Position, Vector3.new(position.X, character.Position.Y, position.Z))
-					end
-				end)
-
-				table.insert(tbl10, connection7)
-			else
-				flag3 = false
-
-				for _, v3 in pairs(tbl10) do
-					pcall(function()
-						v3:Disconnect()
-					end)
-				end
-
-				table.clear(tbl10)
-			end
-		end,
-	})
-end
-
-tbl.autoTPRoofUnder30Enabled = false
-tbl2.autoTPRoofUnder30Thread = nil
-
-tbl6.LightsOutBox:Toggle({
-	Title = "Auto TP Roof Health Under 30",
-	Default = false,
-	Callback = function(autoTPRoofUnder30Enabled)
-		tbl.autoTPRoofUnder30Enabled = autoTPRoofUnder30Enabled
-
-		if tbl.autoTPRoofUnder30Enabled then
-			if tbl2.autoTPRoofUnder30Thread then
-				return
-			end
-			tbl2.autoTPRoofUnder30Thread = true
-
-			task.spawn(function()
-				local flag3 = false
-
-				while tbl2.autoTPRoofUnder30Thread and tbl.autoTPRoofUnder30Enabled do
-					if fn4("LightsOut") then
-						local character = localPlayer.Character
-						local humanoid = character and character:FindFirstChild("Humanoid")
-						character = character and character:FindFirstChild("HumanoidRootPart")
-
-						if humanoid and character and humanoid.Health > 0 and humanoid.Health <= 30 then
-							if not flag3 then
-								character.CFrame = CFrame.new(198, 145, -93)
-								flag3 = true
-							end
-						end
-					else
-						flag3 = false
-					end
-
-					task.wait(0.5)
-				end
-
-				tbl2.autoTPRoofUnder30Thread = nil
-			end)
-		end
-	end,
-})
-
-tbl6.LightsOutBox:Toggle({
-	Title = "Full Bright",
-	Default = false,
-	Callback = function(lightsOutFullBrightEnabled)
-		_G.LightsOutFullBrightEnabled = lightsOutFullBrightEnabled
-
-		if lightsOutFullBrightEnabled then
-			if not _G.LightsOutFullBrightCacheThread then
-				_G.LightsOutFullBrightCacheThread = true
-
-				task.spawn(function()
-					_G.CachedBrightObjects = {}
-
-					local connection6 = workspace.DescendantAdded:Connect(function(descendant)
-						if _G.LightsOutFullBrightEnabled and fn4("LightsOut") then
-							local isLight = descendant:IsA("Light")
-							local flag3
-
-							if isLight then
-								flag3 = isLight
-							else
-								flag3 = descendant:IsA("BasePart") and descendant.Name == "ChangeColorLightsOut"
-							end
-
-							if flag3 then
-								table.insert(_G.CachedBrightObjects, descendant)
-							end
-						end
-					end)
-
-					local flag3 = false
-
-					while _G.LightsOutFullBrightCacheThread do
-						local LightsOut = _G.LightsOutFullBrightEnabled and fn4("LightsOut")
-
-						if LightsOut and not flag3 then
-							table.clear(_G.CachedBrightObjects)
-							local lightsOutMap = workspace:FindFirstChild("LightsOutMap") or workspace
-							local n = 0
-
-							for _, descendant in ipairs(lightsOutMap:GetDescendants()) do
-								if _G.LightsOutFullBrightCacheThread then
-									if descendant:IsA("Light") or descendant:IsA("BasePart") and descendant.Name == "ChangeColorLightsOut" then
-										table.insert(_G.CachedBrightObjects, descendant)
-									end
-
-									n += 1
-
-									if n % 500 == 0 then
-										task.wait()
-									end
-
-									continue
-								end
-
-								break
-							end
-						else
-							flag3 = not LightsOut and flag3
-
-							if flag3 then
-								table.clear(_G.CachedBrightObjects)
-							end
-						end
-
-						task.wait(2)
-						flag3 = LightsOut
-					end
-
-					connection6:Disconnect()
-				end)
-			end
-
-			if not _G.LightsOutFullBrightRenderThread then
-				_G.LightsOutFullBrightRenderThread = game:GetService("RunService").RenderStepped:Connect(function()
-					if _G.LightsOutFullBrightEnabled and fn4("LightsOut") then
-						local Lighting = game:GetService("Lighting")
-						Lighting.Ambient = Color3.fromRGB(150, 150, 150)
-						Lighting.OutdoorAmbient = Color3.fromRGB(150, 150, 150)
-						Lighting.Brightness = 1
-						Lighting.ClockTime = 14
-						local atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
-
-						if atmosphere then
-							atmosphere.Density = 0
-						end
-
-						local colorCorrectionEffect = Lighting:FindFirstChildOfClass("ColorCorrectionEffect")
-
-						if colorCorrectionEffect then
-							colorCorrectionEffect.TintColor = Color3.fromRGB(255, 255, 255)
-							colorCorrectionEffect.Brightness = 0
-							colorCorrectionEffect.Contrast = 0
-							colorCorrectionEffect.Saturation = 0
-						end
-
-						if _G.CachedBrightObjects then
-							for _, cachedBrightObject in ipairs(_G.CachedBrightObjects) do
-								if cachedBrightObject and cachedBrightObject.Parent then
-									if cachedBrightObject:IsA("Light") then
-										cachedBrightObject.Enabled = true
-
-										if cachedBrightObject.Color.G < 0.2 and cachedBrightObject.Color.B < 0.2 then
-											cachedBrightObject.Color = Color3.fromRGB(255, 255, 255)
-										end
-									elseif cachedBrightObject:IsA("BasePart") then
-										if cachedBrightObject.Color.G < 0.2 and cachedBrightObject.Color.B < 0.2 then
-											cachedBrightObject.Color = Color3.fromRGB(255, 255, 255)
-										end
-									end
-								end
-							end
-						end
-					end
-				end)
-			end
-		else
-			_G.LightsOutFullBrightCacheThread = false
-
-			if _G.LightsOutFullBrightRenderThread then
-				_G.LightsOutFullBrightRenderThread:Disconnect()
-				_G.LightsOutFullBrightRenderThread = nil
-			end
-
-			if _G.CachedBrightObjects then
-				table.clear(_G.CachedBrightObjects)
-			end
-		end
-	end,
-})
-
-tbl6.LightsOutBox:Toggle({
-	Title = "Vampire Vision",
-	Default = false,
-	Callback = function(vampireVisionEnabled)
-		local Lighting = game:GetService("Lighting")
-		local enabled = vampireVisionEnabled and true or false
-		local vampireNightVision = Lighting:FindFirstChild("VampireNightVision")
-
-		if enabled then
-			if not vampireNightVision then
-				local colorCorrectionEffect = Instance.new("ColorCorrectionEffect")
-				colorCorrectionEffect.Name = "VampireNightVision"
-				colorCorrectionEffect.Parent = Lighting
-				vampireNightVision = colorCorrectionEffect
-			end
-
-			vampireNightVision.Brightness = 0.16
-			vampireNightVision.Contrast = 0.06
-			vampireNightVision.Saturation = -0.08
-			vampireNightVision.TintColor = Color3.fromRGB(255, 236, 236)
-
-			fn5("Vampire Vision", "Vampire Vision Enabled")
-		elseif vampireNightVision then
-			vampireNightVision:Destroy()
-			fn5("Vampire Vision", "Vampire Vision Disabled")
-		end
-	end,
-})
-
-tbl6.GuardBox = tbl5.Guard:Section({ Opened = true, Title = "| Guard Mode", Icon = "shield" })
-
-tbl6.GuardBox:Button({
-	Title = "Free Perm Guard",
-	Callback = function()
-		localPlayer:SetAttribute("__OwnsPermGuard", true)
-		fn5(" Guard", "Free Perm Guard Activated")
-	end,
-})
-
-do
-	local ArcadeAutoFarmEnabled = false
-	local ArcadeAutoFarmTask    = nil
-	local ArcadeCurrentGame     = nil
-	local ArcadeConsoleCache    = nil
-	local ArcadeGameModule      = nil
-
-	local function findConsole()
-		if ArcadeConsoleCache and ArcadeConsoleCache.Parent then
-			return ArcadeConsoleCache
-		end
-		ArcadeConsoleCache = nil
-
-		local candidates = {
-			Workspace:FindFirstChild("Arcade"),
-			Workspace:FindFirstChild("Arcades"),
-			Workspace:FindFirstChild("Map"),
-			Workspace:FindFirstChild("Interactive"),
-			Workspace:FindFirstChild("Objects"),
-		}
-		for _, folder in ipairs(candidates) do
-			if folder then
-				local found = folder:FindFirstChild("Screen", true)
-				if found and found.Parent then
-					local par = found.Parent
-					if par:FindFirstChild("SurfaceGui") or found:FindFirstChild("SurfaceGui") then
-						ArcadeConsoleCache = par
-						return par
-					end
-				end
-			end
-		end
-
-		for _, d in ipairs(Workspace:GetChildren()) do
-			if d:IsA("Model") or d:IsA("Folder") then
-				local s = d:FindFirstChild("Screen", true)
-				if s and s:FindFirstChild("SurfaceGui") then
-					ArcadeConsoleCache = s.Parent
-					return ArcadeConsoleCache
-				end
-			end
-		end
-		return nil
-	end
-
-	local function runWinFarm()
-		if not ArcadeGameModule then
-			local ok, result = pcall(function()
-				return require(ReplicatedStorage.Modules.PlayableArcadeGame)
-			end)
-			if not ok or not result then return end
-			ArcadeGameModule = result
-		end
-
-		local console = findConsole()
-		if not console then return end
-
-		local char = localPlayer.Character
-		if not char then return end
-		local hrp = char:FindFirstChild("HumanoidRootPart")
-		if not hrp then return end
-
-		if ArcadeCurrentGame then
-			pcall(function()
-				ArcadeCurrentGame.Stopping = true
-				ArcadeCurrentGame:Destroy()
-			end)
-			ArcadeCurrentGame = nil
-		end
-
-		local g = ArcadeGameModule.new(console, hrp)
-		ArcadeCurrentGame = g
-		g:start()
-
-		local now = os.clock()
-		while g.State ~= "Running" and os.clock() - now < 3 do
-			if not ArcadeAutoFarmEnabled then
-				pcall(function() g:Destroy() end)
-				ArcadeCurrentGame = nil
-				return
-			end
-			task.wait(0.1)
-		end
-
-		if not ArcadeAutoFarmEnabled then
-			pcall(function() g:Destroy() end)
-			ArcadeCurrentGame = nil
-			return
-		end
-
-		if g.State ~= "Running" then
-			pcall(function() g:Destroy() end)
-			ArcadeCurrentGame = nil
-			return
-		end
-
-		g.Score = 4499
-		if g.ScoreLabel then
-			g.ScoreLabel.Text = "Score: 4499"
-		end
-		table.clear(g.CalculateScore)
-		for _ = 1, 99 do
-			table.insert(g.CalculateScore, "Coin")
-		end
-		g:win("You Won! Congrats! :D")
-	end
-
-	local function toggleAutoFarm(enabled)
-		enabled = enabled and true or false
-		ArcadeAutoFarmEnabled = enabled
-
-		if ArcadeAutoFarmTask then
-			pcall(function() task.cancel(ArcadeAutoFarmTask) end)
-			ArcadeAutoFarmTask = nil
-		end
-
-		if not enabled then
-			if ArcadeCurrentGame then
-				pcall(function()
-					ArcadeCurrentGame.Stopping = true
-					ArcadeCurrentGame:Destroy()
-				end)
-				ArcadeCurrentGame = nil
-			end
-			ArcadeConsoleCache = nil
-			return true
-		end
-
-		ArcadeAutoFarmTask = task.spawn(function()
-			while ArcadeAutoFarmEnabled do
-				pcall(runWinFarm)
-				if not ArcadeAutoFarmEnabled then break end
-				task.wait(2)
-			end
-			ArcadeAutoFarmTask = nil
-		end)
-		return true
-	end
-
-	tbl6.GuardBox:Toggle({
-		Title = "Won Farm",
-		Default = false,
-		Callback = function(enabled)
-			toggleAutoFarm(enabled)
-			if enabled then
-				fn5(" Won Farm", "Won Farm Enabled")
-			else
-				fn5(" Won Farm", "Won Farm Disabled")
-			end
-		end,
-	})
-end
-
-tbl.guardQteEnabled = false
-tbl2.guardQteThread = nil
-
-tbl6.GuardBox:Toggle({
-	Title = "Auto QTE Event (Guard)",
-	Default = false,
-	Callback = function(guardQteEnabled)
-		tbl.guardQteEnabled = guardQteEnabled
-
-		if tbl.guardQteEnabled and not tbl2.guardQteThread then
-			tbl2.guardQteThread = task.spawn(function()
-				local tbl10 = {}
-
-				while tbl.guardQteEnabled do
-					if localPlayer:GetAttribute("IsGuard") then
-						local v3 = fn7()
-
-						if v3 and v3.ActiveButtons then
-							for k, activeButton in pairs(v3.ActiveButtons) do
-								if not tbl10[k] and activeButton then
-									tbl10[k] = true
-
-									if tbl.guardQteEnabled and v3.ActiveButtons and v3.ActiveButtons[k] then
-										pcall(function()
-											v3.Pressed(false, v3.ActiveButtons[k])
-										end)
-									end
-								end
-							end
-
-							for k in pairs(tbl10) do
-								if not v3.ActiveButtons[k] then
-									tbl10[k] = nil
-								end
-							end
-						end
-					else
-						table.clear(tbl10)
-					end
-
-					task.wait()
-				end
-
-				tbl2.guardQteThread = nil
-			end)
-		end
-	end,
-})
-
-tbl.autoKillRedArrowEnabled = false
-tbl2.autoKillRedArrowThread = nil
-
-local function fn14()
-	local character = localPlayer.Character
-	if not character then
-		return nil
-	end
-
-	local tbl10 = {
-		G3SG1 = true,
-		["Glock 17"] = true,
-		["Five Seven"] = true,
-		["Colt M1911"] = true,
-		Uzi = true,
-		MP5K = true,
-		["Thompson M1A1"] = true,
-		["Colt Python 6"] = true,
-		M4A1 = true,
-		["FN Fal"] = true,
-		HK416 = true,
-		Deagle = true,
-		P90 = true,
-	}
-
-	for _, child in ipairs(character:GetChildren()) do
-		if tbl10[child.Name] then
-			return child
-		end
-	end
-
-	return nil
-end
-
-tbl6.GuardBox:Toggle({
-	Title = "Auto Shoot",
-	Locked = true,
-	Default = false,
-	Callback = function(autoKillRedArrowEnabled)
-		tbl.autoKillRedArrowEnabled = autoKillRedArrowEnabled
-
-		if tbl.autoKillRedArrowEnabled then
-			if tbl2.autoKillRedArrowThread then
-				return
-			end
-			tbl2.autoKillRedArrowThread = true
-
-			task.spawn(function()
-				while tbl.autoKillRedArrowEnabled and tbl2.autoKillRedArrowThread do
-					local live = workspace:FindFirstChild("Live")
-					local v3 = fn14()
-					local character = localPlayer.Character
-					local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
-
-					if live and v3 and humanoidRootPart then
-						for _, child in ipairs(live:GetChildren()) do
-							if child:IsA("Model") then
-								local humanoidRootPart2 = child:FindFirstChild("HumanoidRootPart")
-								local humanoid = child:FindFirstChild("Humanoid")
-
-								if humanoidRootPart2 and humanoid and humanoid.Health > 0 and child ~= character then
-									local guardCanKillLockOn = humanoidRootPart2:FindFirstChild("GuardCanKillLockOn")
-									local isBillboardGui = guardCanKillLockOn and guardCanKillLockOn:IsA("BillboardGui")
-									local flag3 = false
-
-									if isBillboardGui then
-										flag3 = true
-									end
-
-									if flag3 then
-										local vector = Vector3.new
-
-										local tbl10 = {
-											v3,
-											{
-												ClientRayNormal = Vector3.new(0.707164, 0, -0.707049),
-												FiredGun = true,
-												bulletCF = CFrame.new(-221, 191, 269, 0.108, 0.141, 0.983, 0, 0.989, -0.142, -0.994, 0.015, 0.107),
-												ClientRayInstance = humanoidRootPart2,
-												SecondaryHitTargets = {},
-												ClientRayPosition = humanoidRootPart2.Position,
-												HitTargets = { [vector] = "Head" },
-												bulletSizeC = Vector3.new(0.01, 0.01, 48.3),
-												NoMuzzleFX = false,
-												FirePosition = humanoidRootPart.Position + Vector3.new(0, 1.5, 0),
-											},
-										}
-
-										pcall(function()
-											game:GetService("ReplicatedStorage").Remotes.FiredGunClient:FireServer(unpack(tbl10))
-											task.wait(0.05)
-											game:GetService("ReplicatedStorage").Remotes.FiredGunClient:FireServer(v3, { ReloadingGun = true })
-										end)
-									end
-								end
-							end
-						end
-					end
-
-					task.wait(0.15)
-				end
-
-				tbl2.autoKillRedArrowThread = nil
-			end)
-		end
-	end,
-})
-
-tbl6.GuardBox:Toggle({
-	Title = "Silent Aim",
-	Default = false,
-	Callback = function(silentAimEnabled)
-		tbl.silentAimEnabled = silentAimEnabled
-
-		if silentAimEnabled then
-			fn11()
-		end
-	end,
-})
-
-local connection6 = nil
-
-tbl6.GuardBox:Toggle({
-	Title = "Infinite Ammo",
-	Default = false,
-	Callback = function(infiniteAmmoGuardEnabled)
-		tbl.infiniteAmmoGuardEnabled = infiniteAmmoGuardEnabled
-
-		if infiniteAmmoGuardEnabled then
-			if not connection6 then
-				connection6 = game:GetService("RunService").RenderStepped:Connect(function()
-					if not tbl.infiniteAmmoGuardEnabled then
-						return
-					end
-
-					pcall(function()
-						local character = localPlayer.Character
-						if not character then
-							return
-						end
-						local tool = character:FindFirstChildOfClass("Tool")
-
-						if tool then
-							local infoClient = tool:FindFirstChild("InfoClient") or tool:FindFirstChild("Info")
-
-							if infoClient then
-								local bullets = infoClient:FindFirstChild("Bullets")
-								local maxBullets = tool:FindFirstChild("MaxBullets") or tool:FindFirstChild("MagSize")
-
-								if bullets then
-									maxBullets = maxBullets and maxBullets.Value or 999
-
-									if bullets.Value < maxBullets then
-										bullets.Value = maxBullets
-									end
-								end
-							end
-						end
-					end)
-				end)
-			end
-		elseif connection6 then
-			pcall(function()
-				connection6:Disconnect()
-			end)
-
-			connection6 = nil
-		end
-	end,
-})
-
-tbl.autoShootAAEnabled = false
-tbl2.autoShootAAThread = nil
-
-local function fn15()
-	local character = localPlayer.Character
-	if not character then
-		return nil
-	end
-
-	for _, v3 in pairs({
-		"Colt M1911",
-		"Uzi",
-		"Five Seven",
-		"MP5K",
-		"Colt Python 6",
-		"Deagle",
-		"P90",
-		"FN Fal",
-		"M4A1",
-		"HK416",
-	}) do
-		local v4 = character:FindFirstChild(v3)
-		if v4 then
-			return v4
-		end
-	end
-
-	return nil
-end
-
-tbl3.lastAARLGLTPTime = 0
-tbl6.AdminAbuseBox = tbl5.Tools:Section({ Opened = true, Title = "| Admin Abuse Tools", Icon = "terminal" })
-
-tbl6.AdminAbuseBox:Button({
-	Title = "RLGL TP Start",
-	Callback = function()
-		if not fn4("AdminAbuseRedLightGreenLight") then
-			fn5(nil, "Admin Abuse RLGL is not currently running.")
-			return
-		end
-		local lastAARLGLTPTime = tbl3.lastAARLGLTPTime
-
-		if tick() - lastAARLGLTPTime < 10 then
-			local lastAARLGLTPTime2 = tbl3.lastAARLGLTPTime
-			fn5(nil, "Please wait before teleporting again (" .. math.ceil(10 - tick() - lastAARLGLTPTime2) .. "s)")
-			return
-		end
-
-		fn9(CFrame.new(-1375, -30, 22))
-		tbl3.lastAARLGLTPTime = tick()
-		fn5(nil, "Teleported to Start")
-	end,
-})
-
-tbl6.AdminAbuseBox:Button({
-	Title = "RLGL TP End",
-	Callback = function()
-		if not fn4("AdminAbuseRedLightGreenLight") then
-			fn5(nil, "Admin Abuse RLGL is not currently running.")
-			return
-		end
-		local lastAARLGLTPTime = tbl3.lastAARLGLTPTime
-
-		if tick() - lastAARLGLTPTime < 10 then
-			local lastAARLGLTPTime2 = tbl3.lastAARLGLTPTime
-			fn5(nil, "Please wait before teleporting again (" .. math.ceil(10 - tick() - lastAARLGLTPTime2) .. "s)")
-			return
-		end
-
-		fn9(CFrame.new(-1361, -28, 701))
-		tbl3.lastAARLGLTPTime = tick()
-		fn5(nil, "Teleported to End")
-	end,
-})
-
-tbl6.AdminAbuseBox:Toggle({
-	Title = "Auto Shoot PBRS (AA)",
-	Locked = true,
-	Default = false,
-	Callback = function(autoShootAAEnabled)
-		tbl.autoShootAAEnabled = autoShootAAEnabled
-
-		if tbl.autoShootAAEnabled then
-			if tbl2.autoShootAAThread then
-				return
-			end
-			tbl2.autoShootAAThread = true
-
-			task.spawn(function()
-				while tbl.autoShootAAEnabled and tbl2.autoShootAAThread do
-					if fn15() and localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") then
-						local live = nil
-
-						for _, child in pairs(workspace:GetChildren()) do
-							if child:IsA("Model") or child:IsA("Folder") then
-								live = child:FindFirstChild("Live")
-								if not (live and live:IsA("Folder")) then
-									live = nil
-									continue
-								end
-							else
-								live = nil
-								continue
-							end
-
-							break
-						end
-
-						if not live then
-							for _, descendant in pairs(workspace:GetDescendants()) do
-								if descendant.Name == "Live" and descendant:IsA("Folder") then
-									live = descendant
-									break
-								end
-							end
-						end
-
-						if live then
-							for _, child in pairs(live:GetChildren()) do
-								if child:IsA("Model") and string.match(string.lower(child.Name), "peabert") then
-									local basePart = child:FindFirstChildWhichIsA("BasePart", true)
-
-									if basePart then
-										local v3 = fn15()
-
-										if v3 then
-											local tbl10 = {
-												v3,
-												{
-													ClientRayNormal = Vector3.new(0.707164, 0, -0.707049),
-													FiredGun = true,
-													bulletCF = CFrame.new(-221, 191, 269, 0.108, 0.141, 0.983, 0, 0.989, -0.142, -0.994, 0.015, 0.107),
-													ClientRayInstance = basePart,
-													SecondaryHitTargets = {},
-													ClientRayPosition = basePart.Position,
-													HitTargets = { [child.Name] = basePart.Name },
-													bulletSizeC = Vector3.new(0.01, 0.01, 48.3),
-													NoMuzzleFX = false,
-													FirePosition = localPlayer.Character.HumanoidRootPart.Position,
-												},
-											}
-
-											pcall(function()
-												game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("FiredGunClient"):FireServer(unpack(tbl10))
-												task.wait(0.05)
-												game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("FiredGunClient"):FireServer(v3, { ReloadingGun = true })
-											end)
-										end
-									end
-								end
-							end
-						end
-					end
-
-					task.wait(0.15)
-				end
-
-				tbl2.autoShootAAThread = nil
-			end)
-		end
-	end,
-})
-
-tbl6.AdminAbuseBox:Toggle({
-	Title = "Silent Aim",
-	Default = false,
-	Callback = function(silentAimEnabled)
-		tbl.silentAimEnabled = silentAimEnabled
-
-		if silentAimEnabled then
-			fn11()
-		end
-	end,
-})
-
-local flag3 = false
-
-tbl5.UISettings:Section({ Opened = true, Title = "Menu" }):Toggle({
-	Title = "Unlock Mouse When Menu Open",
-	Default = false,
-	Callback = function(unlockMouseWhileOpen)
-		flag3 = unlockMouseWhileOpen
-
-		if Library then
-			Library.UnlockMouseWhileOpen = unlockMouseWhileOpen
-		end
-
-		if not unlockMouseWhileOpen and Library and Library.ScreenGui then
-			for _, child in ipairs(Library.ScreenGui:GetChildren()) do
-				if child:IsA("TextButton") and child.Size == UDim2.fromScale(0, 0) then
-					child.Modal = false
-				end
-			end
-		end
-	end,
-})
-
-task.spawn(function()
-	local RunService_ = game:GetService("RunService")
-	local GuiService = game:GetService("GuiService")
-
-	RunService_:BindToRenderStep("AggressiveMouseLock", Enum.RenderPriority.Last.Value + 2, function()
-		if Library and not Library.Unloaded then
-			local flag4 = false
-
-			pcall(function()
-				if type(Library.Toggled) == "boolean" then
-					flag4 = not Library.Toggled
-				elseif Library.MainGui then
-					flag4 = not Library.MainGui.Enabled
-				end
-			end)
-
-			if not GuiService.MenuIsOpen then
-				if not flag4 and not flag3 then
-					if Library.ScreenGui then
-						for _, child in ipairs(Library.ScreenGui:GetChildren()) do
-							if child:IsA("TextButton") and child.Size == UDim2.fromScale(0, 0) then
-								child.Modal = false
-							end
-						end
-					end
-				end
-			end
-		end
-	end)
-end)
-
-pcall(function()
-end)
-
 --==================================================--
---       PLAYER INFO (NEW TAB) — ADDED FEATURE        --
+--       PLAYER INFO TAB — ENHANCED (HIGHLIGHT + ROLE) --
 --==================================================--
 do
 	local selectedPlayer = localPlayer
 	local playerNames = {}
-	
-	for _, p in ipairs(Players:GetPlayers()) do
-		table.insert(playerNames, p.Name)
+	local selectedHighlight = nil
+
+	local function buildPlayerList()
+		playerNames = {}
+		for _, p in ipairs(Players:GetPlayers()) do
+			table.insert(playerNames, p.Name)
+		end
 	end
 
-	tbl6.PlayerInfoBox = tbl5.PlayerInfo:Section({ Opened = true, Title = "| Target Player Info", Icon = "user" })
+	local function applyHighlight(targetPlayer)
+		if selectedHighlight then
+			pcall(function() selectedHighlight:Destroy() end)
+			selectedHighlight = nil
+		end
+
+		if not targetPlayer then return end
+		if targetPlayer == localPlayer then return end
+
+		local character = targetPlayer.Character
+		if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+
+		local hl = Instance.new("Highlight")
+		hl.Name = "PlayerInfo_Highlight"
+		hl.FillColor = Color3.fromRGB(0, 255, 255)
+		hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+		hl.FillTransparency = 0.55
+		hl.OutlineTransparency = 0
+		hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+		hl.Adornee = character
+		hl.Parent = character
+		selectedHighlight = hl
+	end
+
+	buildPlayerList()
+
+	tbl6.PlayerInfoBox = tbl5.PlayerInfo:Section({ Opened = true, Title = "| Target Player Info", Icon = "user-search" })
 
 	local targetPlayerDropdown = tbl6.PlayerInfoBox:Dropdown({
 		Title = "Select Player",
@@ -12251,12 +10617,14 @@ do
 		Default = localPlayer.Name,
 		Multi = false,
 		Callback = function(selected)
+			if not selected or type(selected) ~= "string" then return end
 			for _, p in ipairs(Players:GetPlayers()) do
 				if p.Name == selected then
 					selectedPlayer = p
 					break
 				end
 			end
+			applyHighlight(selectedPlayer)
 		end,
 	})
 
@@ -12281,64 +10649,155 @@ do
 				targetPlayerDropdown:Refresh(playerNames)
 			end
 		end)
+
+		if selectedPlayer == p then
+			if selectedHighlight then
+				pcall(function() selectedHighlight:Destroy() end)
+				selectedHighlight = nil
+			end
+		end
+	end)
+
+	selectedPlayer.CharacterAdded:Connect(function()
+		task.wait(0.5)
+		if selectedPlayer then
+			applyHighlight(selectedPlayer)
+		end
 	end)
 
 	tbl6.PlayerInfoBox:Divider()
 
-	local targetNameLabel = tbl6.PlayerInfoBox:Paragraph({ Title = "Target Name:", Desc = "Loading..." })
-	local targetDisplayLabel = tbl6.PlayerInfoBox:Paragraph({ Title = "Target Display:", Desc = "Loading..." })
-	local targetUserIdLabel = tbl6.PlayerInfoBox:Paragraph({ Title = "Target User ID:", Desc = "Loading..." })
-	local targetHealthLabel = tbl6.PlayerInfoBox:Paragraph({ Title = "Target Health:", Desc = "Loading..." })
-	local targetTeamLabel = tbl6.PlayerInfoBox:Paragraph({ Title = "Target Team:", Desc = "Loading..." })
+	local function makeLabel(title, desc)
+		return tbl6.PlayerInfoBox:Paragraph({ Title = title, Desc = desc })
+	end
+
+	local targetNameLabel      = makeLabel("Target Name:", "Loading...")
+	local targetDisplayLabel   = makeLabel("Target Display:", "Loading...")
+	local targetUserIdLabel    = makeLabel("Target User ID:", "Loading...")
+	local targetHealthLabel    = makeLabel("Target Health:", "Loading...")
+	local targetHealthPctLabel = makeLabel("Target Health %:", "Loading...")
+	local targetTeamLabel      = makeLabel("Target Team:", "Loading...")
+	local targetRoleLabel      = makeLabel("Target Role:", "Loading...")
+	local targetGuardLabel     = makeLabel("Playable Guard:", "Loading...")
+	local targetStatusLabel    = makeLabel("Target Status:", "Loading...")
+	local targetDistanceLabel  = makeLabel("Distance:", "Loading...")
+	local targetPositionLabel  = makeLabel("Position:", "Loading...")
+
+	local function setDesc(label, text)
+		pcall(function()
+			if label.SetDesc then
+				label:SetDesc(tostring(text))
+			elseif label.Set then
+				label:Set(tostring(text))
+			end
+		end)
+	end
+
+	local function detectRole(p)
+		if not p then return "None" end
+
+		local char = p.Character
+		local isGuardAttr = p:GetAttribute("IsGuard")
+		local isHunterAttr = p:GetAttribute("IsHunter")
+		local isHiderAttr = p:GetAttribute("IsHider")
+		local isRebelAttr = p:GetAttribute("IsRebel")
+		local charGuard = char and (char:FindFirstChild("GuardCanKill") ~= nil or char:FindFirstChild("TypeOfGuard") ~= nil)
+
+		if isGuardAttr == true or charGuard then
+			local guardType = p:GetAttribute("GuardType") or p:GetAttribute("GuardSelection") or "Unknown"
+			return "🛡️ Guard (" .. tostring(guardType) .. ")"
+		elseif isHunterAttr == true then
+			return "🎯 Hunter"
+		elseif isHiderAttr == true then
+			return "🏃 Hider"
+		elseif isRebelAttr == true then
+			return "⚔️ Rebel"
+		elseif char then
+			local hum = char:FindFirstChildOfClass("Humanoid")
+			if hum and hum.Health > 0 then
+				return "👤 Player"
+			end
+		end
+
+		return "❓ Unknown"
+	end
+
+	local function detectPlayableGuard(p)
+		if not p then return "No" end
+		local hasPermGuard = p:GetAttribute("__OwnsPermGuard")
+		local hasGuardType = p:GetAttribute("GuardType") or p:GetAttribute("GuardSelection")
+		local char = p.Character
+
+		if hasPermGuard then
+			return "✅ Yes (Perm Guard)"
+		elseif hasGuardType then
+			return "✅ Yes (" .. tostring(hasGuardType) .. ")"
+		elseif char and (char:FindFirstChild("GuardCanKill") or char:FindFirstChild("TypeOfGuard")) then
+			return "✅ Yes (Active)"
+		else
+			return "❌ No"
+		end
+	end
 
 	task.spawn(function()
 		while true do
 			pcall(function()
 				if selectedPlayer and selectedPlayer.Parent then
-					local function setDesc(label, text)
-						pcall(function()
-							if label.SetDesc then
-								label:SetDesc(text)
-							elseif label.Set then
-								label:Set(text)
-							end
-						end)
-					end
-
 					setDesc(targetNameLabel, selectedPlayer.Name)
 					setDesc(targetDisplayLabel, selectedPlayer.DisplayName)
 					setDesc(targetUserIdLabel, tostring(selectedPlayer.UserId))
 
 					local char = selectedPlayer.Character
-					if char then
-						local hum = char:FindFirstChildOfClass("Humanoid")
-						if hum then
-							setDesc(targetHealthLabel, math.floor(hum.Health) .. " / " .. math.floor(hum.MaxHealth))
-						else
-							setDesc(targetHealthLabel, "N/A")
-						end
+					local hum = char and char:FindFirstChildOfClass("Humanoid")
+					if hum then
+						local hp = math.floor(hum.Health)
+						local maxHp = math.floor(hum.MaxHealth)
+						local pct = maxHp > 0 and math.floor((hp / maxHp) * 100) or 0
+						setDesc(targetHealthLabel, hp .. " / " .. maxHp)
+						setDesc(targetHealthPctLabel, pct .. "%")
 					else
-						setDesc(targetHealthLabel, "Offline / No Character")
+						setDesc(targetHealthLabel, "N/A")
+						setDesc(targetHealthPctLabel, "N/A")
 					end
 
 					local team = selectedPlayer.Team
 					setDesc(targetTeamLabel, team and team.Name or "None")
-				else
-					local function setNone(label)
-						pcall(function()
-							if label.SetDesc then
-								label:SetDesc("None")
-							elseif label.Set then
-								label:Set("None")
-							end
-						end)
+
+					setDesc(targetRoleLabel, detectRole(selectedPlayer))
+					setDesc(targetGuardLabel, detectPlayableGuard(selectedPlayer))
+
+					if char and char:FindFirstChild("HumanoidRootPart") then
+						setDesc(targetStatusLabel, "🟢 Alive / Loaded")
+					elseif char then
+						setDesc(targetStatusLabel, "🟡 Loading Character")
+					else
+						setDesc(targetStatusLabel, "🔴 No Character")
 					end
 
-					setNone(targetNameLabel)
-					setNone(targetDisplayLabel)
-					setNone(targetUserIdLabel)
-					setNone(targetHealthLabel)
-					setNone(targetTeamLabel)
+					local myChar = localPlayer.Character
+					local myHRP = myChar and myChar:FindFirstChild("HumanoidRootPart")
+					local theirHRP = char and char:FindFirstChild("HumanoidRootPart")
+					if myHRP and theirHRP then
+						local dist = math.floor((myHRP.Position - theirHRP.Position).Magnitude)
+						setDesc(targetDistanceLabel, dist .. " studs")
+						local pos = theirHRP.Position
+						setDesc(targetPositionLabel, string.format("X: %d, Y: %d, Z: %d", pos.X, pos.Y, pos.Z))
+					else
+						setDesc(targetDistanceLabel, "N/A")
+						setDesc(targetPositionLabel, "N/A")
+					end
+				else
+					setDesc(targetNameLabel, "None")
+					setDesc(targetDisplayLabel, "None")
+					setDesc(targetUserIdLabel, "None")
+					setDesc(targetHealthLabel, "None")
+					setDesc(targetHealthPctLabel, "None")
+					setDesc(targetTeamLabel, "None")
+					setDesc(targetRoleLabel, "None")
+					setDesc(targetGuardLabel, "None")
+					setDesc(targetStatusLabel, "None")
+					setDesc(targetDistanceLabel, "None")
+					setDesc(targetPositionLabel, "None")
 				end
 			end)
 			task.wait(1)
@@ -12346,18 +10805,35 @@ do
 	end)
 
 	tbl6.PlayerInfoBox:Divider()
+
 	tbl6.PlayerInfoBox:Button({
 		Title = "Refresh Player List",
 		Callback = function()
-			playerNames = {}
-			for _, p in ipairs(Players:GetPlayers()) do
-				table.insert(playerNames, p.Name)
-			end
+			buildPlayerList()
 			pcall(function()
 				if targetPlayerDropdown and targetPlayerDropdown.Refresh then
 					targetPlayerDropdown:Refresh(playerNames)
 				end
 			end)
+		end,
+	})
+
+	tbl6.PlayerInfoBox:Button({
+		Title = "Highlight Selected Player",
+		Callback = function()
+			applyHighlight(selectedPlayer)
+			fn5("Player Info", "Highlighting: " .. (selectedPlayer and selectedPlayer.Name or "None"))
+		end,
+	})
+
+	tbl6.PlayerInfoBox:Button({
+		Title = "Clear Highlight",
+		Callback = function()
+			if selectedHighlight then
+				pcall(function() selectedHighlight:Destroy() end)
+				selectedHighlight = nil
+			end
+			fn5("Player Info", "Highlight Cleared")
 		end,
 	})
 
@@ -12374,6 +10850,31 @@ do
 				end
 			else
 				fn5("Player Info", "No valid target selected")
+			end
+		end,
+	})
+
+	tbl6.PlayerInfoBox:Button({
+		Title = "Spectate Target (Toggle)",
+		Callback = function()
+			if not selectedPlayer or selectedPlayer == localPlayer then
+				fn5("Player Info", "No valid target selected")
+				return
+			end
+			local targetChar = selectedPlayer.Character
+			local hum = targetChar and targetChar:FindFirstChildOfClass("Humanoid")
+			local cam = workspace.CurrentCamera
+			if hum and cam then
+				if cam.CameraSubject == hum then
+					local myHum = localPlayer.Character and localPlayer.Character:FindFirstChildOfClass("Humanoid")
+					cam.CameraSubject = myHum or hum
+					fn5("Player Info", "Stopped spectating")
+				else
+					cam.CameraSubject = hum
+					fn5("Player Info", "Spectating: " .. selectedPlayer.Name)
+				end
+			else
+				fn5("Player Info", "Target has no Humanoid")
 			end
 		end,
 	})
